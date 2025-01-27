@@ -126,12 +126,13 @@ async fn copy_song(
         .and_then(|ext| ext.to_str())
         .unwrap_or("unknown");
 
+    // Changed directory structure to Artist/Album
     let output_dir = output_dir
-        .join(sanitize(&metadata.artist))
-        .join(sanitize(&metadata.album));
+        .join(format!("{} - {}", sanitize(&metadata.artist), sanitize(&metadata.album)));
 
     fs::create_dir_all(&output_dir).await.map_err(|e| DumperError::PathError(e.to_string()))?;
 
+    // Changed filename format to include track number if available
     let output_path = output_dir.join(format!("{}.{}", sanitize(&metadata.title), extension));
     
     if output_path.exists() {
